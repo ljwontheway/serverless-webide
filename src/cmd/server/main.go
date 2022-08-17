@@ -79,8 +79,8 @@ func (sm *ServerManager) init() func(http.ResponseWriter, *http.Request) {
 func (sm *ServerManager) shutdown() func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		glog.Infof("Starting server manager shutdown ...")
-
-		sm.VscodeServer.Shutdown()
+		var user = r.URL.Query().Get("user")
+		sm.VscodeServer.Shutdown(user)
 
 		w.WriteHeader(http.StatusOK)
 		fmt.Fprint(w, "pre-stop handler success")

@@ -60,13 +60,13 @@ func NewServer(ctx *context.Context, user string) (*Server, error) {
 	s.VscodeDataDir = s.VscodeDataDir + "/" + user
 	s.VscodeBinaryDir, _ = homedir.Expand(viper.GetString("vscode.binaryDirectory"))
 	s.VscodeDataOssPath = viper.GetString("vscode.dataOssPath")
-	strings.ReplaceAll(s.VscodeDataOssPath, "%user", user)
+	s.VscodeDataOssPath = strings.ReplaceAll(s.VscodeDataOssPath, "%user", user)
 	glog.Info("VscodeDataOssPath:" + s.VscodeDataOssPath)
 	s.WorkspaceDir, _ = homedir.Expand(viper.GetString("workspace.directory"))
 	s.WorkspaceDir = s.WorkspaceDir + "/" + user
 	glog.Info("workspaceDir:" + s.WorkspaceDir)
 	s.WorkspaceOssPath = viper.GetString("workspace.ossPath")
-	strings.ReplaceAll(s.WorkspaceOssPath, "%user", user)
+	s.WorkspaceOssPath = strings.ReplaceAll(s.WorkspaceOssPath, "%user", user)
 	s.OssBucketName = viper.GetString("ossBucketName")
 
 	// high priority env
@@ -159,7 +159,7 @@ func (s *Server) init() error {
 }
 
 // Shutdown shut down the vscode server.
-func (s *Server) Shutdown() {
+func (s *Server) Shutdown(user string) {
 	// Save the vscode server data to oss.
 	err := s.save(s.VscodeDataDir, s.VscodeDataOssPath)
 	if err != nil {
