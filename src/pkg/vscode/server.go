@@ -8,6 +8,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"strings"
 	"time"
 
 	"github.com/aliyun/aliyun-oss-go-sdk/oss"
@@ -34,7 +35,7 @@ type (
 // NewServer creates the vscode server.
 // ctx contains info, such as the ak_id/secret credential info, that is generated at runtime.
 // configFilePath is the config file where store the configuration for vscode server running.
-func NewServer(ctx *context.Context) (*Server, error) {
+func NewServer(ctx *context.Context, user string) (*Server, error) {
 	// Read the configurations from the specified file.
 	// err := viper.ReadInConfig()
 	// if err != nil {
@@ -56,10 +57,16 @@ func NewServer(ctx *context.Context) (*Server, error) {
 	s.Host = viper.GetString("vscode.host")
 	s.Port = viper.GetString("vscode.port")
 	s.VscodeDataDir, _ = homedir.Expand(viper.GetString("vscode.dataDirectory"))
+	s.VscodeDataDir = s.VscodeDataDir + "/" + user
 	s.VscodeBinaryDir, _ = homedir.Expand(viper.GetString("vscode.binaryDirectory"))
 	s.VscodeDataOssPath = viper.GetString("vscode.dataOssPath")
+	strings.ReplaceAll(s.VscodeDataOssPath, "%user", user)
+	glog.Info("VscodeDataOssPath:" + s.VscodeDataOssPath)
 	s.WorkspaceDir, _ = homedir.Expand(viper.GetString("workspace.directory"))
+	s.WorkspaceDir = s.WorkspaceDir + "/" + user
+	glog.Info("workspaceDir:" + s.WorkspaceDir)
 	s.WorkspaceOssPath = viper.GetString("workspace.ossPath")
+	strings.ReplaceAll(s.WorkspaceOssPath, "%user", user)
 	s.OssBucketName = viper.GetString("ossBucketName")
 
 	// high priority env

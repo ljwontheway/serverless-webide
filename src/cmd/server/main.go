@@ -25,7 +25,8 @@ type ServerManager struct {
 func (sm *ServerManager) init() func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		glog.Infof("Starting server manager init ...")
-
+		var user = r.URL.Query().Get("user")
+		glog.Info("user is " + user)
 		// Get contextSource option from config file.
 		// contextSource indicates where to get the context.
 		// In FC runtime, context should be parsed from the request headers.
@@ -49,7 +50,7 @@ func (sm *ServerManager) init() func(http.ResponseWriter, *http.Request) {
 		}
 
 		// Create the vscode server.
-		sm.VscodeServer, err = vscode.NewServer(ctx)
+		sm.VscodeServer, err = vscode.NewServer(ctx, user)
 		if err != nil {
 			glog.Errorf("Create vscode server failed. Error: %v", err)
 			// Create vscode server failed because of invalid ak id, ak secret and security token, then return 403 Forbidden error.
@@ -122,10 +123,10 @@ func main() {
 	sm := &ServerManager{}
 
 	// Register the initializer handler.
-	http.HandleFunc("/initialize", sm.init())
+	http.HandleFunc("/start", sm.init())
 
 	// Register the shutdown handler.
-	http.HandleFunc("/pre-stop", sm.shutdown())
+	http.HandleFunc("/shutdown", sm.shutdown())
 
 	// Handle all other requests to your server using the proxy.
 	http.HandleFunc("/", sm.process())

@@ -5,7 +5,7 @@ vscode:
   port: 9527
   dataDirectory: /data/webapps/serverless-webide/target/vscode-server
   binaryDirectory: /data/webapps/serverless-webide/src/third_party/openvscode-server-v1.67.0-linux-amd64/bin
-  dataOssPath: vscode-server/vscode-server-data.tar.gz
+  dataOssPath: vscode-server/%user/vscode-server-data.tar.gz
 workspace:
   directory: /data/webapps/serverless-webide/target/workspace
-  ossPath: vscode-server/workspace.tar.gz
+  ossPath: vscode-server/%user/workspace.tar.gz
