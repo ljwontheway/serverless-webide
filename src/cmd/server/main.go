@@ -123,10 +123,10 @@ func main() {
 	sm := &ServerManager{}
 
 	// Register the initializer handler.
-	http.HandleFunc("/start", sm.init())
+	http.HandleFunc("/initialize", sm.init())
 
 	// Register the shutdown handler.
-	http.HandleFunc("/shutdown", sm.shutdown())
+	http.HandleFunc("/pre-stop", sm.shutdown())
 
 	// Handle all other requests to your server using the proxy.
 	http.HandleFunc("/", sm.process())
